@@ -2,8 +2,11 @@ package simulation
 
 import (
 	"container/heap"
+	"errors"
 	"time"
 )
+
+var ErrNoEvents = errors.New("no queued events")
 
 type sim struct {
 	maxWait          time.Duration
@@ -32,15 +35,29 @@ func New(maxWait time.Duration, arrivals []arrivalGroup) *sim {
 	return s
 }
 
-func (s *sim) SimulateNextEvent() {
-	a := s.arrivalQueue.front()
-	f := s.freeQueue.front()
-
-	if a.time < f.time {
-		s.simulateArrival()
-	} else {
-		s.simulateFree()
+// @return The minimum possible open checkpoints after the simulated event.
+func (s *sim) SimulateNextEvent() (int, error) {
+	var a, f *event
+	if len(s.arrivalQueue) > 0 {
+		a = s.arrivalQueue.front()
 	}
+	if len(s.freeQueue) > 0 {
+		f = s.freeQueue.front()
+	}
+
+	if a == nil && f == nil {
+		return 0, ErrNoEvents
+	}
+
+	if f == nil {
+		s.simulateArrival()
+	} else if a == nil || f.time < a.time {
+		s.simulateFree()
+	} else {
+		s.simulateArrival()
+	}
+
+	return len(s.freeQueue), nil
 }
 
 func (s *sim) simulateArrival() {
