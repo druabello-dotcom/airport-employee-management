@@ -49,13 +49,9 @@ func (s *sim) simulateArrival() {
 	s.passengerQueue = append(s.passengerQueue, e.time)
 
 	if len(s.freeQueue) == 0 {
-		heap.Push(&s.freeQueue, &event{
-			time: e.time,
-		})
+		s.openCheckpoint(e.time)
 		return
 	}
-
-	s.checkMaxWait(e.time)
 }
 
 func (s *sim) simulateFree() {
@@ -71,27 +67,54 @@ func (s *sim) simulateFree() {
 		return
 	}
 
-	if len(s.freeQueue) == 0 {
-		// There are still passengers queued, but no checkpoint open.
-		heap.Push(&s.freeQueue, &event{
-			time: e.time,
-		})
+	// Assume the checkpoint will close, then we can correct if wrong.
+	// This avoids reopening and then closing the same checkpoint.
+	if !s.sufficientCheckpoints() {
+		// We must reopen this one to avoid exceeding maxWait.
+		s.openCheckpoint(e.time + s.timePerPassenger)
+	} else if len(s.freeQueue) == 0 {
 		return
 	}
 
-	s.checkMaxWait(e.time)
+	earliest := s.freeQueue.front().time
+	deadline := s.passengerQueue[0] + s.maxWait
+
+	if earliest > deadline {
+		// We cannot afford to have this passenger wait for next available checkpoint.
+		s.openCheckpoint(e.time)
+	}
 }
 
-func (s *sim) checkMaxWait(t time.Duration) {
-	nextFree := s.freeQueue.front().time
-	remWait := s.maxWait - (t - s.passengerQueue[0])
+// Simulates all passengers in the queue to check if the current amount of checkpoints is
+// sufficient to not keep anyone waiting more than maxWait.
+func (s *sim) sufficientCheckpoints() bool {
+	if len(s.freeQueue) == 0 {
+		return false
+	}
 
-	if remWait < nextFree-t {
-		// We cannot afford to have this passenger wait.
-		heap.Push(&s.freeQueue, &event{
-			time: t,
+	checkpoints := make(eventQueue, len(s.freeQueue))
+	copy(checkpoints, s.freeQueue)
+
+	for _, t := range s.passengerQueue {
+		deadline := t + s.maxWait
+		earliest := heap.Pop(&checkpoints).(*event)
+
+		if earliest.time > deadline {
+			return false
+		}
+
+		heap.Push(&checkpoints, &event{
+			time: earliest.time + s.timePerPassenger,
 		})
 	}
+
+	return true
+}
+
+func (s *sim) openCheckpoint(t time.Duration) {
+	heap.Push(&s.freeQueue, &event{
+		time: t,
+	})
 }
 
 func (s *sim) IsFinished() bool {
