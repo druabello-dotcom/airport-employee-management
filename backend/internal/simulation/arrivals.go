@@ -4,14 +4,14 @@ import (
 	"time"
 )
 
-type arrivalGroup struct {
+type ArrivalGroup struct {
 	start    time.Duration
 	duration time.Duration
 	amount   int
 }
 
 // @param arrivals Slice of arrivalGroup, sorted by start.
-func ArrivalsToEvents(arrivals []arrivalGroup) []event {
+func ArrivalsToEvents(arrivals []ArrivalGroup) []event {
 	events := make([]event, 0, len(arrivals))
 
 	for _, a := range arrivals {

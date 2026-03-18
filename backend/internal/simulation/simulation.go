@@ -17,7 +17,7 @@ type sim struct {
 	passengerQueue []time.Duration // Arrival times of currently queued passengers.
 }
 
-func New(maxWait time.Duration, arrivals []arrivalGroup) *sim {
+func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
 	s := &sim{
 		maxWait:      maxWait,
 		arrivalQueue: make(eventQueue, len(arrivals)),
