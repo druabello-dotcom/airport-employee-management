@@ -39,3 +39,7 @@ func (q *eventQueue) Pop() any {
 	*q = (*q)[0 : n-1]
 	return e
 }
+
+func (q *eventQueue) front() *event {
+	return (*q)[0]
+}
