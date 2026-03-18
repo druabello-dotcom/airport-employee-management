@@ -44,7 +44,18 @@ func (s *sim) SimulateNextEvent() {
 }
 
 func (s *sim) simulateArrival() {
+	e := heap.Pop(&s.arrivalQueue).(*event)
 
+	s.passengerQueue = append(s.passengerQueue, e.time)
+
+	if len(s.freeQueue) == 0 {
+		heap.Push(&s.freeQueue, &event{
+			time: e.time,
+		})
+		return
+	}
+
+	s.checkMaxWait(e.time)
 }
 
 func (s *sim) simulateFree() {
@@ -69,13 +80,17 @@ func (s *sim) simulateFree() {
 		return
 	}
 
-	nextFree := s.freeQueue.front().time
-	remWait := s.maxWait - (e.time - s.passengerQueue[0])
+	s.checkMaxWait(e.time)
+}
 
-	if remWait < nextFree-e.time {
+func (s *sim) checkMaxWait(t time.Duration) {
+	nextFree := s.freeQueue.front().time
+	remWait := s.maxWait - (t - s.passengerQueue[0])
+
+	if remWait < nextFree-t {
 		// We cannot afford to have this passenger wait.
 		heap.Push(&s.freeQueue, &event{
-			time: e.time,
+			time: t,
 			kind: eventFree,
 		})
 	}
