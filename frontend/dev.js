@@ -40,16 +40,20 @@ Bun.serve({
 
 		const filePath =
 			url.pathname === "/" ? "./src/index.html" : `./src${url.pathname}`;
-		let html = await Bun.file(filePath).text();
-		html = html.replace(
-			"</body>",
-			`<script>
+
+		if (filePath.endsWith(".html")) {
+			let html = await Bun.file(filePath).text();
+			html = html.replace(
+				"</body>",
+				`<script>
 				const es = new EventSource("/__reload");
 				es.onmessage = () => location.reload();
 			</script></body>`
-		);
+			);
+			return new Response(html, { headers: { "Content-Type": "text/html" } });
+		}
 
-		return new Response(html, { headers: { "Content-Type": "text/html" } });
+		return new Response(Bun.file(filePath));
 	},
 });
 
