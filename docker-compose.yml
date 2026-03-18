@@ -2,3 +2,13 @@ services:
   server:
     build: ./backend
     restart: "unless-stopped"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src # Mount for hot reload.
+    environment:
+      - NODE_ENV=development
+    command: bun run dev
