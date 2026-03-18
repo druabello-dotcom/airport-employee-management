@@ -2,16 +2,8 @@ package simulation
 
 import "time"
 
-const (
-	eventArrival eventType = iota
-	eventFree
-)
-
-type eventType int
-
 type event struct {
 	time time.Duration
-	kind eventType
 }
 
 type eventQueue []*event

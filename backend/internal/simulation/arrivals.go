@@ -20,7 +20,6 @@ func ArrivalsToEvents(arrivals []arrivalGroup) []event {
 			t := a.duration.Nanoseconds() / int64(a.amount) * int64(i)
 			events = append(events, event{
 				time: a.start + time.Duration(t),
-				kind: eventArrival,
 			})
 		}
 	}

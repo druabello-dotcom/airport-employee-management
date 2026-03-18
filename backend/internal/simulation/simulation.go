@@ -75,7 +75,6 @@ func (s *sim) simulateFree() {
 		// There are still passengers queued, but no checkpoint open.
 		heap.Push(&s.freeQueue, &event{
 			time: e.time,
-			kind: eventFree,
 		})
 		return
 	}
@@ -91,7 +90,6 @@ func (s *sim) checkMaxWait(t time.Duration) {
 		// We cannot afford to have this passenger wait.
 		heap.Push(&s.freeQueue, &event{
 			time: t,
-			kind: eventFree,
 		})
 	}
 }
