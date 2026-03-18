@@ -5,9 +5,9 @@ import (
 )
 
 type ArrivalGroup struct {
-	start    time.Duration
-	duration time.Duration
-	amount   int
+	Start    time.Duration
+	Duration time.Duration
+	Amount   int
 }
 
 // @param arrivals Slice of arrivalGroup, sorted by start.
@@ -16,10 +16,10 @@ func ArrivalsToEvents(arrivals []ArrivalGroup) []event {
 
 	for _, a := range arrivals {
 		// Calculate arrival times for all passengers, assuming uniform distribution.
-		for i := range a.amount {
-			t := a.duration.Nanoseconds() / int64(a.amount) * int64(i)
+		for i := range a.Amount {
+			t := a.Duration.Nanoseconds() / int64(a.Amount) * int64(i)
 			events = append(events, event{
-				time: a.start + time.Duration(t),
+				time: a.Start + time.Duration(t),
 			})
 		}
 	}

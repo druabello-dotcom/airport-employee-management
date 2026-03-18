@@ -12,6 +12,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /helloworld", handlers.HandleHelloWorld)
+	mux.HandleFunc("POST /checkpoints", handlers.HandleCheckpoints)
 
 	log.Println("Server listening on port 8080")
 	log.Fatalln(http.ListenAndServe(":8080", mux))
