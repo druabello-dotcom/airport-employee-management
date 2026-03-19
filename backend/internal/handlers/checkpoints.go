@@ -3,7 +3,9 @@ package handlers
 import (
 	"compress/gzip"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -11,6 +13,19 @@ import (
 )
 
 const defaultDuration = 30 * time.Minute
+
+type checkpointsReq struct {
+	MaxWait time.Duration `json:"maxWait"`
+}
+
+type checkpointsResp struct {
+	Events []checkpointEvent `json:"events"`
+}
+
+type checkpointEvent struct {
+	Time    time.Duration `json:"time"`
+	MinOpen int           `json:"minOpen"`
+}
 
 func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	const (
@@ -34,6 +49,13 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseMultipartForm(maxRequestBody); err != nil {
 		http.Error(w, "File too large", http.StatusBadRequest)
+		return
+	}
+
+	jsonStr := r.FormValue("config")
+	var config checkpointsReq
+	if err := json.Unmarshal([]byte(jsonStr), &config); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
 
@@ -66,6 +88,32 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 		// Update duration of previous.
 		arrivals[i-1].Duration = arrivals[i].Start - arrivals[i-1].Start
 	}
-
 	arrivals[len(arrivals)-1].Duration = defaultDuration
+
+	sim := simulation.New(config.MaxWait, arrivals)
+	resp := checkpointsResp{Events: make([]checkpointEvent, 0)}
+	for !sim.IsFinished() {
+		minOpen, t, err := sim.SimulateNextEvent()
+		if err != nil {
+			http.Error(w, "Simulation failed", http.StatusInternalServerError)
+			log.Printf("Simulating checkpoints failed: %v\n", err)
+			return
+		}
+
+		resp.Events = append(resp.Events, checkpointEvent{
+			Time:    t,
+			MinOpen: minOpen,
+		})
+	}
+
+	j, err := json.Marshal(resp)
+	if err != nil {
+		http.Error(w, "Failure creating response", http.StatusInternalServerError)
+		log.Printf("Failed creating checkpoints resp: %v\n", err)
+		return
+	}
+
+	if _, err := w.Write(j); err != nil {
+		log.Printf("Error writing checkpoints resp: %v\n", err)
+	}
 }

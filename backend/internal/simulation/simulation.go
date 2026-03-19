@@ -35,8 +35,8 @@ func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
 	return s
 }
 
-// @return The minimum possible open checkpoints after the simulated event.
-func (s *sim) SimulateNextEvent() (int, error) {
+// @return The minimum possible open checkpoints after the simulated event, and the time of the event.
+func (s *sim) SimulateNextEvent() (int, time.Duration, error) {
 	var a, f *event
 	if len(s.arrivalQueue) > 0 {
 		a = s.arrivalQueue.front()
@@ -45,34 +45,39 @@ func (s *sim) SimulateNextEvent() (int, error) {
 		f = s.freeQueue.front()
 	}
 
+	var t time.Duration
+
 	if a == nil && f == nil {
-		return 0, ErrNoEvents
+		return 0, t, ErrNoEvents
 	}
 
 	if f == nil {
-		s.simulateArrival()
+		t = s.simulateArrival()
 	} else if a == nil || f.time < a.time {
-		s.simulateFree()
+		t = s.simulateFree()
 	} else {
-		s.simulateArrival()
+		t = s.simulateArrival()
 	}
 
-	return len(s.freeQueue), nil
+	return len(s.freeQueue), t, nil
 }
 
-func (s *sim) simulateArrival() {
+func (s *sim) simulateArrival() (t time.Duration) {
 	e := heap.Pop(&s.arrivalQueue).(*event)
+	t = e.time
 
 	s.passengerQueue = append(s.passengerQueue, e.time)
 
 	if len(s.freeQueue) == 0 {
 		s.openCheckpoint(e.time)
-		return
 	}
+
+	return
 }
 
-func (s *sim) simulateFree() {
+func (s *sim) simulateFree() (t time.Duration) {
 	e := heap.Pop(&s.freeQueue).(*event)
+	t = e.time
 
 	if len(s.passengerQueue) == 0 {
 		return
@@ -100,6 +105,8 @@ func (s *sim) simulateFree() {
 		// We cannot afford to have this passenger wait for next available checkpoint.
 		s.openCheckpoint(e.time)
 	}
+
+	return
 }
 
 // Simulates all passengers in the queue to check if the current amount of checkpoints is
