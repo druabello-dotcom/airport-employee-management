@@ -15,7 +15,7 @@ import (
 const defaultDuration = 30 * time.Minute
 
 type checkpointsReq struct {
-	MaxWait time.Duration `json:"maxWait"`
+	MaxWait duration `json:"maxWait"`
 }
 
 type checkpointsResp struct {
@@ -25,6 +25,11 @@ type checkpointsResp struct {
 type checkpointEvent struct {
 	Time    time.Duration `json:"time"`
 	MinOpen int           `json:"minOpen"`
+}
+
+// Wrapper to allow unmarshalling json into a duration.
+type duration struct {
+	time.Duration
 }
 
 func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
@@ -74,13 +79,13 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arrivals := make([]simulation.ArrivalGroup, len(records))
-	if err = arrivals[0].ParseFromCSV(records[0]); err != nil {
+	arrivals := make([]simulation.ArrivalGroup, len(records)-1)
+	if err = arrivals[0].ParseFromCSV(records[1]); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to parse arrival group: %v", err), http.StatusBadRequest)
 		return
 	}
-	for i := 1; i < len(records); i++ {
-		if err = arrivals[i].ParseFromCSV(records[i]); err != nil {
+	for i := 1; i < len(records)-1; i++ {
+		if err = arrivals[i].ParseFromCSV(records[i+1]); err != nil {
 			http.Error(w, fmt.Sprintf("Failed to parse arrival group: %v", err), http.StatusBadRequest)
 			return
 		}
@@ -90,7 +95,7 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	}
 	arrivals[len(arrivals)-1].Duration = defaultDuration
 
-	sim := simulation.New(config.MaxWait, arrivals)
+	sim := simulation.New(config.MaxWait.Duration, arrivals)
 	resp := checkpointsResp{Events: make([]checkpointEvent, 0)}
 	for !sim.IsFinished() {
 		minOpen, t, err := sim.SimulateNextEvent()
@@ -116,4 +121,26 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write(j); err != nil {
 		log.Printf("Error writing checkpoints resp: %v\n", err)
 	}
+}
+
+func (d *duration) UnmarshalJSON(b []byte) error {
+	var j any
+	err := json.Unmarshal(b, &j)
+	if err != nil {
+		return err
+	}
+
+	switch value := j.(type) {
+	case float64:
+		d.Duration = time.Duration(value)
+	case string:
+		d.Duration, err = time.ParseDuration(value)
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("invalid duration: %#v", j)
+	}
+
+	return nil
 }
