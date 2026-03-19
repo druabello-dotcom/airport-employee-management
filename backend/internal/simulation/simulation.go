@@ -19,12 +19,13 @@ type sim struct {
 
 func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
 	s := &sim{
-		maxWait:      maxWait,
-		arrivalQueue: make(eventQueue, len(arrivals)),
-		freeQueue:    make(eventQueue, 0),
+		maxWait:   maxWait,
+		freeQueue: make(eventQueue, 0),
 	}
 
 	arrivalEvents := ArrivalsToEvents(arrivals)
+
+	s.arrivalQueue = make(eventQueue, len(arrivalEvents))
 
 	// Initialize event queue with events.
 	for i := range arrivalEvents {
