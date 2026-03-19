@@ -1,6 +1,8 @@
 package simulation
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -25,4 +27,21 @@ func ArrivalsToEvents(arrivals []ArrivalGroup) []event {
 	}
 
 	return events
+}
+
+func (ag *ArrivalGroup) ParseFromCSV(s []string) error {
+	start, err := time.ParseDuration(s[0])
+	if err != nil {
+		return fmt.Errorf("parsing start time: %w", err)
+	}
+
+	amount, err := strconv.Atoi(s[1])
+	if err != nil {
+		return fmt.Errorf("parsing amount: %w", err)
+	}
+
+	ag.Start = start
+	ag.Amount = amount
+
+	return nil
 }

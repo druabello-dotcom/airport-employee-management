@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/druabello/airport-employee-management/internal/simulation"
@@ -53,41 +52,20 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arrivals := make([]simulation.ArrivalGroup, 0, len(records))
-	ag, err := csvToArrivalGroup(records[0])
-	if err != nil {
+	arrivals := make([]simulation.ArrivalGroup, len(records))
+	if err = arrivals[0].ParseFromCSV(records[0]); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to parse arrival group: %v", err), http.StatusBadRequest)
 		return
 	}
-	arrivals = append(arrivals, ag)
 	for i := 1; i < len(records); i++ {
-		ag, err = csvToArrivalGroup(records[i])
-		if err != nil {
+		if err = arrivals[i].ParseFromCSV(records[i]); err != nil {
 			http.Error(w, fmt.Sprintf("Failed to parse arrival group: %v", err), http.StatusBadRequest)
 			return
 		}
 
-		arrivals[i-1].Duration = ag.Start - arrivals[i-1].Start // Update duration of previous.
-
-		arrivals = append(arrivals, ag)
+		// Update duration of previous.
+		arrivals[i-1].Duration = arrivals[i].Start - arrivals[i-1].Start
 	}
 
 	arrivals[len(arrivals)-1].Duration = defaultDuration
-}
-
-func csvToArrivalGroup(s []string) (simulation.ArrivalGroup, error) {
-	start, err := time.ParseDuration(s[0])
-	if err != nil {
-		return simulation.ArrivalGroup{}, fmt.Errorf("parsing start time: %w", err)
-	}
-
-	amount, err := strconv.Atoi(s[1])
-	if err != nil {
-		return simulation.ArrivalGroup{}, fmt.Errorf("parsing amount: %w", err)
-	}
-
-	return simulation.ArrivalGroup{
-		Start:  start,
-		Amount: amount,
-	}, nil
 }
