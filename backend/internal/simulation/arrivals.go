@@ -1,9 +1,15 @@
 package simulation
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
+)
+
+var (
+	ErrNoTimeColumn   = errors.New("no time column in csv")
+	ErrNoPeopleColumn = errors.New("no people column in csv")
 )
 
 type ArrivalGroup struct {
@@ -12,13 +18,23 @@ type ArrivalGroup struct {
 	Amount   int
 }
 
-func (ag *ArrivalGroup) ParseFromCSV(s []string) error {
-	start, err := time.ParseDuration(s[0])
+func (ag *ArrivalGroup) ParseFromCSV(s []string, columnToIdx map[string]int) error {
+	timeIdx, ok := columnToIdx["time"]
+	if !ok {
+		return ErrNoTimeColumn
+	}
+
+	start, err := time.ParseDuration(s[timeIdx])
 	if err != nil {
 		return fmt.Errorf("parsing start time: %w", err)
 	}
 
-	amount, err := strconv.Atoi(s[1])
+	peopleIdx, ok := columnToIdx["people"]
+	if !ok {
+		return ErrNoPeopleColumn
+	}
+
+	amount, err := strconv.Atoi(s[peopleIdx])
 	if err != nil {
 		return fmt.Errorf("parsing amount: %w", err)
 	}

@@ -72,27 +72,18 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arrivals := make([]simulation.ArrivalGroup, len(records)-1)
-	if err = arrivals[0].ParseFromCSV(records[1]); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to parse arrival group: %v", err), http.StatusBadRequest)
+	arrivals, err := parseArrivals(records)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed parsing csv: %v", err), http.StatusBadRequest)
 		return
 	}
-	for i := 1; i < len(records)-1; i++ {
-		if err = arrivals[i].ParseFromCSV(records[i+1]); err != nil {
-			http.Error(w, fmt.Sprintf("Failed to parse arrival group: %v", err), http.StatusBadRequest)
-			return
-		}
 
-		// Update duration of previous.
-		arrivals[i-1].Duration = arrivals[i].Start - arrivals[i-1].Start
-	}
-	arrivals[len(arrivals)-1].Duration = defaultDuration
-
+	// Run simulation.
 	sim := simulation.New(config.MaxWait.Duration, config.TimePerPassenger.Duration)
-
 	arrivalTimes := simulation.ArrivalsToTime(arrivals)
 	simRes := sim.Run(arrivalTimes)
 
+	// "Compress" data to reasonable intervals.
 	resp := simulation.FindIntervalMaximums(simRes, config.ResultInterval.Duration)
 
 	j, err := json.Marshal(resp)
@@ -105,6 +96,30 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write(j); err != nil {
 		log.Printf("Error writing checkpoints resp: %v\n", err)
 	}
+}
+
+func parseArrivals(records [][]string) ([]simulation.ArrivalGroup, error) {
+	columnToIdx := make(map[string]int)
+	for i, field := range records[0] {
+		columnToIdx[field] = i
+	}
+
+	arrivals := make([]simulation.ArrivalGroup, len(records)-1)
+	if err := arrivals[0].ParseFromCSV(records[1], columnToIdx); err != nil {
+		return nil, err
+	}
+	for i := 1; i < len(records)-1; i++ {
+		if err := arrivals[i].ParseFromCSV(records[i+1], columnToIdx); err != nil {
+			return nil, err
+		}
+
+		// Update duration of previous.
+		arrivals[i-1].Duration = arrivals[i].Start - arrivals[i-1].Start
+	}
+
+	arrivals[len(arrivals)-1].Duration = defaultDuration
+
+	return arrivals, nil
 }
 
 func (d *duration) UnmarshalJSON(b []byte) error {
