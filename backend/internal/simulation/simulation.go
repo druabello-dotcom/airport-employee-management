@@ -41,22 +41,21 @@ func New(maxWait, timePerPassenger time.Duration, arrivals []ArrivalGroup) *sim 
 func (s *sim) Run(arrivals []time.Duration) []Result {
 	results := make([]Result, len(arrivals))
 
-	checkpoints := make([]time.Duration, 0)
+	checkpoints := make(timeHeap, 0)
 	for i, arrivalT := range arrivals {
 		// Remove all idle checkpoints.
 		for len(checkpoints) > 0 && checkpoints[0] < arrivalT {
-			checkpoints = checkpoints[1:]
+			heap.Pop(&checkpoints)
 		}
 
 		deadline := arrivalT + s.maxWait
 		canServeInTime := len(checkpoints) > 0 && checkpoints[0] <= deadline
 		if canServeInTime {
-			t := checkpoints[0]
-			checkpoints = checkpoints[1:]
-			checkpoints = insertSorted(checkpoints, max(t, arrivalT)+s.timePerPassenger)
+			t := heap.Pop(&checkpoints).(time.Duration)
+			heap.Push(&checkpoints, t+s.timePerPassenger)
 		} else {
 			// Need to open new checkpoint.
-			checkpoints = insertSorted(checkpoints, arrivalT+s.timePerPassenger)
+			heap.Push(&checkpoints, arrivalT+s.timePerPassenger)
 		}
 
 		results[i].Time = arrivalT
