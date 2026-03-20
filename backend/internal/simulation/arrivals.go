@@ -30,7 +30,7 @@ func (ag *ArrivalGroup) ParseFromCSV(s []string) error {
 }
 
 // @param arrivals Slice of arrivalGroup, sorted by start.
-func arrivalsToTime(arrivals []ArrivalGroup) []time.Duration {
+func ArrivalsToTime(arrivals []ArrivalGroup) []time.Duration {
 	times := make([]time.Duration, 0, len(arrivals))
 
 	for _, a := range arrivals {

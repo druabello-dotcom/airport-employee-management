@@ -3,7 +3,7 @@ package simulation
 import (
 	"container/heap"
 	"errors"
-	"fmt"
+	"sort"
 	"time"
 )
 
@@ -30,26 +30,52 @@ func New(maxWait, timePerPassenger time.Duration, arrivals []ArrivalGroup) *sim 
 		freeQueue:        make(timeHeap, 0),
 	}
 
-	s.arrivalQueue = arrivalsToTime(arrivals)
+	s.arrivalQueue = ArrivalsToTime(arrivals)
 	heap.Init(&s.arrivalQueue)
 
 	return s
 }
 
-// Runs the entire simulation and collects the results.
-func (s *sim) Run() ([]Result, error) {
-	results := make([]Result, 0)
+// Finds the minimum number of open checkpoints at the time of each arrival.
+// @param arrivals The arrival times of the passengers, must be sorted in ascending order.
+func (s *sim) Run(arrivals []time.Duration) []Result {
+	results := make([]Result, len(arrivals))
 
-	for !s.IsFinished() {
-		res, err := s.SimulateNextEvent()
-		if err != nil {
-			return nil, fmt.Errorf("simulating event: %w", err)
+	checkpoints := make([]time.Duration, 0)
+	for i, arrivalT := range arrivals {
+		// Remove all idle checkpoints.
+		for len(checkpoints) > 0 && checkpoints[0] < arrivalT {
+			checkpoints = checkpoints[1:]
 		}
 
-		results = append(results, res)
+		deadline := arrivalT + s.maxWait
+		canServeInTime := len(checkpoints) > 0 && checkpoints[0] <= deadline
+		if canServeInTime {
+			t := checkpoints[0]
+			checkpoints = checkpoints[1:]
+			checkpoints = insertSorted(checkpoints, max(t, arrivalT)+s.timePerPassenger)
+		} else {
+			// Need to open new checkpoint.
+			checkpoints = insertSorted(checkpoints, arrivalT+s.timePerPassenger)
+		}
+
+		results[i].Time = arrivalT
+		results[i].MinOpen = len(checkpoints)
 	}
 
-	return results, nil
+	return results
+}
+
+func insertSorted(checkpoints []time.Duration, t time.Duration) []time.Duration {
+	i := sort.Search(len(checkpoints), func(i int) bool {
+		return checkpoints[i] >= t
+	})
+
+	checkpoints = append(checkpoints, 0)     // Increase size by one to be able to shift.
+	copy(checkpoints[i+1:], checkpoints[i:]) // Shift slice after i.
+	checkpoints[i] = t
+
+	return checkpoints
 }
 
 // @return The minimum possible open checkpoints after the simulated event, and the time of the event.
