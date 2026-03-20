@@ -2,36 +2,28 @@ package simulation
 
 import "time"
 
-type event struct {
-	time time.Duration
-}
+type timeHeap []time.Duration
 
-type eventQueue []*event
-
-func (q eventQueue) Len() int {
+func (q timeHeap) Len() int {
 	return len(q)
 }
 
-func (q eventQueue) Less(i, j int) bool {
-	return q[i].time < q[j].time
+func (q timeHeap) Less(i, j int) bool {
+	return q[i] < q[j]
 }
 
-func (q eventQueue) Swap(i, j int) {
+func (q timeHeap) Swap(i, j int) {
 	q[i], q[j] = q[j], q[i]
 }
 
-func (q *eventQueue) Push(x any) {
-	e := x.(*event)
+func (q *timeHeap) Push(x any) {
+	e := x.(time.Duration)
 	*q = append(*q, e)
 }
 
-func (q *eventQueue) Pop() any {
+func (q *timeHeap) Pop() any {
 	n := len(*q)
 	e := (*q)[n-1]
 	*q = (*q)[0 : n-1]
 	return e
-}
-
-func (q *eventQueue) front() *event {
-	return (*q)[0]
 }
