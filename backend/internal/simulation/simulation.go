@@ -22,10 +22,11 @@ type Result struct {
 	MinOpen int           `json:"minOpen"`
 }
 
-func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
+func New(maxWait, timePerPassenger time.Duration, arrivals []ArrivalGroup) *sim {
 	s := &sim{
-		maxWait:   maxWait,
-		freeQueue: make(eventQueue, 0),
+		maxWait:          maxWait,
+		timePerPassenger: timePerPassenger,
+		freeQueue:        make(eventQueue, 0),
 	}
 
 	arrivalEvents := arrivalsToEvents(arrivals)
@@ -77,7 +78,7 @@ func (s *sim) simulateArrival() (t time.Duration) {
 	s.passengerQueue = append(s.passengerQueue, e.time)
 
 	if len(s.freeQueue) == 0 {
-		s.openCheckpoint(e.time)
+		s.queueFree(e.time + s.timePerPassenger)
 	}
 
 	return
@@ -101,7 +102,7 @@ func (s *sim) simulateFree() (t time.Duration) {
 	// This avoids reopening and then closing the same checkpoint.
 	if !s.sufficientCheckpoints() {
 		// We must reopen this one to avoid exceeding maxWait.
-		s.openCheckpoint(e.time + s.timePerPassenger)
+		s.queueFree(e.time + s.timePerPassenger)
 	} else if len(s.freeQueue) == 0 {
 		return
 	}
@@ -111,7 +112,7 @@ func (s *sim) simulateFree() (t time.Duration) {
 
 	if earliest > deadline {
 		// We cannot afford to have this passenger wait for next available checkpoint.
-		s.openCheckpoint(e.time)
+		s.queueFree(e.time)
 	}
 
 	return
@@ -143,7 +144,7 @@ func (s *sim) sufficientCheckpoints() bool {
 	return true
 }
 
-func (s *sim) openCheckpoint(t time.Duration) {
+func (s *sim) queueFree(t time.Duration) {
 	heap.Push(&s.freeQueue, &event{
 		time: t,
 	})

@@ -15,8 +15,9 @@ import (
 const defaultDuration = 30 * time.Minute
 
 type checkpointsReq struct {
-	MaxWait        duration `json:"maxWait"`
-	ResultInterval duration `json:"resultInterval"`
+	MaxWait          duration `json:"maxWait"`
+	ResultInterval   duration `json:"resultInterval"`
+	TimePerPassenger duration `json:"timePerPassenger"`
 }
 
 // Wrapper to allow unmarshalling json into a duration.
@@ -87,7 +88,7 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	}
 	arrivals[len(arrivals)-1].Duration = defaultDuration
 
-	sim := simulation.New(config.MaxWait.Duration, arrivals)
+	sim := simulation.New(config.MaxWait.Duration, config.TimePerPassenger.Duration, arrivals)
 	simRes := make([]simulation.Result, 0)
 	for !sim.IsFinished() {
 		res, err := sim.SimulateNextEvent()
