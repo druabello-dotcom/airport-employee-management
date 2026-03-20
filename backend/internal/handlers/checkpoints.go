@@ -88,7 +88,7 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	}
 	arrivals[len(arrivals)-1].Duration = defaultDuration
 
-	sim := simulation.New(config.MaxWait.Duration, config.TimePerPassenger.Duration, arrivals)
+	sim := simulation.New(config.MaxWait.Duration, config.TimePerPassenger.Duration)
 
 	arrivalTimes := simulation.ArrivalsToTime(arrivals)
 	simRes := sim.Run(arrivalTimes)
