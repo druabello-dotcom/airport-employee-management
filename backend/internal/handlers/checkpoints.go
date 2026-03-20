@@ -89,16 +89,11 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	arrivals[len(arrivals)-1].Duration = defaultDuration
 
 	sim := simulation.New(config.MaxWait.Duration, config.TimePerPassenger.Duration, arrivals)
-	simRes := make([]simulation.Result, 0)
-	for !sim.IsFinished() {
-		res, err := sim.SimulateNextEvent()
-		if err != nil {
-			http.Error(w, "Simulation failed", http.StatusInternalServerError)
-			log.Printf("Simulating checkpoints failed: %v\n", err)
-			return
-		}
-
-		simRes = append(simRes, res)
+	simRes, err := sim.Run()
+	if err != nil {
+		http.Error(w, "Simulation failed", http.StatusInternalServerError)
+		log.Printf("Simulating checkpoints failed: %v\n", err)
+		return
 	}
 
 	resp := simulation.FindIntervalMaximums(simRes, config.ResultInterval.Duration)

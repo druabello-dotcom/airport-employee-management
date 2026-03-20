@@ -3,6 +3,7 @@ package simulation
 import (
 	"container/heap"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -40,6 +41,22 @@ func New(maxWait, timePerPassenger time.Duration, arrivals []ArrivalGroup) *sim 
 	heap.Init(&s.arrivalQueue)
 
 	return s
+}
+
+// Runs the entire simulation and collects the results.
+func (s *sim) Run() ([]Result, error) {
+	results := make([]Result, 0)
+
+	for !s.IsFinished() {
+		res, err := s.SimulateNextEvent()
+		if err != nil {
+			return nil, fmt.Errorf("simulating event: %w", err)
+		}
+
+		results = append(results, res)
+	}
+
+	return results, nil
 }
 
 // @return The minimum possible open checkpoints after the simulated event, and the time of the event.
