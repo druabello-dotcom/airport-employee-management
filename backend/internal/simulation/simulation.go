@@ -23,7 +23,7 @@ func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
 		freeQueue: make(eventQueue, 0),
 	}
 
-	arrivalEvents := ArrivalsToEvents(arrivals)
+	arrivalEvents := arrivalsToEvents(arrivals)
 
 	s.arrivalQueue = make(eventQueue, len(arrivalEvents))
 

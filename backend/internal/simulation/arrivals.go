@@ -12,23 +12,6 @@ type ArrivalGroup struct {
 	Amount   int
 }
 
-// @param arrivals Slice of arrivalGroup, sorted by start.
-func ArrivalsToEvents(arrivals []ArrivalGroup) []event {
-	events := make([]event, 0, len(arrivals))
-
-	for _, a := range arrivals {
-		// Calculate arrival times for all passengers, assuming uniform distribution.
-		for i := range a.Amount {
-			t := a.Duration.Nanoseconds() / int64(a.Amount) * int64(i)
-			events = append(events, event{
-				time: a.Start + time.Duration(t),
-			})
-		}
-	}
-
-	return events
-}
-
 func (ag *ArrivalGroup) ParseFromCSV(s []string) error {
 	start, err := time.ParseDuration(s[0])
 	if err != nil {
@@ -44,4 +27,21 @@ func (ag *ArrivalGroup) ParseFromCSV(s []string) error {
 	ag.Amount = amount
 
 	return nil
+}
+
+// @param arrivals Slice of arrivalGroup, sorted by start.
+func arrivalsToEvents(arrivals []ArrivalGroup) []event {
+	events := make([]event, 0, len(arrivals))
+
+	for _, a := range arrivals {
+		// Calculate arrival times for all passengers, assuming uniform distribution.
+		for i := range a.Amount {
+			t := a.Duration.Nanoseconds() / int64(a.Amount) * int64(i)
+			events = append(events, event{
+				time: a.Start + time.Duration(t),
+			})
+		}
+	}
+
+	return events
 }
