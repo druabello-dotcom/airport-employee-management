@@ -18,8 +18,8 @@ type sim struct {
 }
 
 type Result struct {
-	Time    time.Duration
-	MinOpen int
+	Time    time.Duration `json:"time"`
+	MinOpen int           `json:"minOpen"`
 }
 
 func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {

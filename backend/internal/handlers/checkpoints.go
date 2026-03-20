@@ -15,7 +15,8 @@ import (
 const defaultDuration = 30 * time.Minute
 
 type checkpointsReq struct {
-	MaxWait duration `json:"maxWait"`
+	MaxWait        duration `json:"maxWait"`
+	ResultInterval duration `json:"resultInterval"`
 }
 
 // Wrapper to allow unmarshalling json into a duration.
@@ -99,7 +100,9 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 		simRes = append(simRes, res)
 	}
 
-	j, err := json.Marshal(simRes)
+	resp := simulation.FindIntervalMaximums(simRes, config.ResultInterval.Duration)
+
+	j, err := json.Marshal(resp)
 	if err != nil {
 		http.Error(w, "Failure creating response", http.StatusInternalServerError)
 		log.Printf("Failed creating checkpoints resp: %v\n", err)
