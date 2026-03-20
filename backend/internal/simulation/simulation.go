@@ -17,6 +17,11 @@ type sim struct {
 	passengerQueue []time.Duration // Arrival times of currently queued passengers.
 }
 
+type Result struct {
+	Time    time.Duration
+	MinOpen int
+}
+
 func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
 	s := &sim{
 		maxWait:   maxWait,
@@ -37,7 +42,7 @@ func New(maxWait time.Duration, arrivals []ArrivalGroup) *sim {
 }
 
 // @return The minimum possible open checkpoints after the simulated event, and the time of the event.
-func (s *sim) SimulateNextEvent() (int, time.Duration, error) {
+func (s *sim) SimulateNextEvent() (Result, error) {
 	var a, f *event
 	if len(s.arrivalQueue) > 0 {
 		a = s.arrivalQueue.front()
@@ -46,12 +51,11 @@ func (s *sim) SimulateNextEvent() (int, time.Duration, error) {
 		f = s.freeQueue.front()
 	}
 
-	var t time.Duration
-
 	if a == nil && f == nil {
-		return 0, t, ErrNoEvents
+		return Result{}, ErrNoEvents
 	}
 
+	var t time.Duration
 	if f == nil {
 		t = s.simulateArrival()
 	} else if a == nil || f.time < a.time {
@@ -60,7 +64,10 @@ func (s *sim) SimulateNextEvent() (int, time.Duration, error) {
 		t = s.simulateArrival()
 	}
 
-	return len(s.freeQueue), t, nil
+	return Result{
+		Time:    t,
+		MinOpen: len(s.freeQueue),
+	}, nil
 }
 
 func (s *sim) simulateArrival() (t time.Duration) {

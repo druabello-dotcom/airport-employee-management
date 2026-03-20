@@ -18,15 +18,6 @@ type checkpointsReq struct {
 	MaxWait duration `json:"maxWait"`
 }
 
-type checkpointsResp struct {
-	Events []checkpointEvent `json:"events"`
-}
-
-type checkpointEvent struct {
-	Time    time.Duration `json:"time"`
-	MinOpen int           `json:"minOpen"`
-}
-
 // Wrapper to allow unmarshalling json into a duration.
 type duration struct {
 	time.Duration
@@ -96,22 +87,19 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	arrivals[len(arrivals)-1].Duration = defaultDuration
 
 	sim := simulation.New(config.MaxWait.Duration, arrivals)
-	resp := checkpointsResp{Events: make([]checkpointEvent, 0)}
+	simRes := make([]simulation.Result, 0)
 	for !sim.IsFinished() {
-		minOpen, t, err := sim.SimulateNextEvent()
+		res, err := sim.SimulateNextEvent()
 		if err != nil {
 			http.Error(w, "Simulation failed", http.StatusInternalServerError)
 			log.Printf("Simulating checkpoints failed: %v\n", err)
 			return
 		}
 
-		resp.Events = append(resp.Events, checkpointEvent{
-			Time:    t,
-			MinOpen: minOpen,
-		})
+		simRes = append(simRes, res)
 	}
 
-	j, err := json.Marshal(resp)
+	j, err := json.Marshal(simRes)
 	if err != nil {
 		http.Error(w, "Failure creating response", http.StatusInternalServerError)
 		log.Printf("Failed creating checkpoints resp: %v\n", err)
