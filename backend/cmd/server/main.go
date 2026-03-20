@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/druabello/airport-employee-management/internal/handlers"
+	"github.com/druabello-dotcom/airport-employee-management/internal/handlers"
 )
 
 func main() {

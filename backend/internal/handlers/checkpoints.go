@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/druabello/airport-employee-management/internal/simulation"
+	"github.com/druabello-dotcom/airport-employee-management/internal/simulation"
 )
 
 const defaultDuration = 30 * time.Minute
