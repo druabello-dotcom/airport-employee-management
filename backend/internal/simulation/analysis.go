@@ -8,12 +8,10 @@ func FindIntervalMaximums(data []Result, interval time.Duration) []Result {
 
 	for i := 0; len(data) > 0; i++ {
 		start := interval * time.Duration(i)
-		mx, j := findIntervalMaximum(data, start, interval)
+		r, j := findIntervalMaximum(data, start, interval)
 
-		res = append(res, Result{
-			Time:    start,
-			MinOpen: mx,
-		})
+		r.Time = start
+		res = append(res, r)
 
 		data = data[j:]
 	}
@@ -22,16 +20,24 @@ func FindIntervalMaximums(data []Result, interval time.Duration) []Result {
 }
 
 // @return The maximum in the interval, and the first index outside of the interval.
-func findIntervalMaximum(data []Result, start, interval time.Duration) (int, int) {
-	var mx int
+func findIntervalMaximum(data []Result, start, interval time.Duration) (Result, int) {
+	var mxOpen int
+	var mxWait time.Duration
 
 	for i, r := range data {
 		if r.Time-start > interval {
-			return mx, i
+			return Result{
+				TimeWaited: mxWait,
+				MinOpen:    mxOpen,
+			}, i
 		}
 
-		mx = max(mx, r.MinOpen)
+		mxOpen = max(mxOpen, r.MinOpen)
+		mxWait = max(mxWait, r.TimeWaited)
 	}
 
-	return mx, len(data)
+	return Result{
+		TimeWaited: mxWait,
+		MinOpen:    mxOpen,
+	}, len(data)
 }
