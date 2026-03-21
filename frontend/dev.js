@@ -2,8 +2,28 @@ import chokidar from "chokidar";
 
 const clients = new Set();
 
-chokidar.watch("./src", { usePolling: true }).on("change", path => {
+async function buildFrontend() {
+	const result = await Bun.build({
+		entrypoints: ["./src/main.js"],
+		outdir: "./dist",
+		naming: "main.js",
+		define: {
+			"process.env.API_URL": JSON.stringify(Bun.env.API_URL),
+		},
+	});
+
+	if (!result.success) {
+		console.error("Build failed", result.logs);
+	}
+}
+
+// Initial build.
+await buildFrontend();
+
+chokidar.watch("./src", { usePolling: true }).on("change", async path => {
 	console.log(`[reload] ${path} changed`);
+	await buildFrontend();
+
 	for (const client of clients) {
 		try {
 			client.enqueue("data: reload\n\n");
@@ -38,11 +58,8 @@ Bun.serve({
 			});
 		}
 
-		const filePath =
-			url.pathname === "/" ? "./src/index.html" : `./src${url.pathname}`;
-
-		if (filePath.endsWith(".html")) {
-			let html = await Bun.file(filePath).text();
+		if (url.pathname === "/") {
+			let html = await Bun.file("./src/index.html").text();
 			html = html.replace(
 				"</body>",
 				`<script>
@@ -53,7 +70,10 @@ Bun.serve({
 			return new Response(html, { headers: { "Content-Type": "text/html" } });
 		}
 
-		return new Response(Bun.file(filePath));
+		if (url.pathname === "/main.js")
+			return new Response(Bun.file("./dist/main.js"));
+
+		return new Response(Bun.file(`./src${url.pathname}`));
 	},
 });
 

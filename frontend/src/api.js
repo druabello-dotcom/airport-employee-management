@@ -1,10 +1,19 @@
+const defaultConfig = {
+	maxWait: "10m",
+	resultInterval: "5m",
+	timePerPassenger: "10s",
+};
+
 export async function getNeededCheckpoints(file, config, signal) {
+	if (!config)
+		config = defaultConfig;
+
 	const formData = new FormData();
 	formData.set("file", file);
-	formData.set("config", config);
+	formData.set("config", JSON.stringify(config));
 
 	try {
-		const resp = await fetch(`${Bun.env.API_URL}/checkpoints`, {
+		const resp = await fetch(`${process.env.API_URL}/checkpoints`, {
 			method: "POST",
 			body: formData,
 			signal: signal,

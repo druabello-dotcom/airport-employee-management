@@ -1,10 +1,13 @@
-document.getElementById('form').addEventListener('submit', checkpointReq);
-async function checkpointReq(file) {
+import { getNeededCheckpoints } from "./api.js";
+
+document.getElementById("form").addEventListener("submit", event => {
+	event.preventDefault();
+
+	const file = document.getElementById("file").files[0];
 	if (!file) {
-		console.warn('No file selected');
+		console.warn("No file selected");
 		return;
 	}
 
-	const formData = new FormData();
-	formData.append('user-file', file);
-}
+	console.log(getNeededCheckpoints(file));
+});

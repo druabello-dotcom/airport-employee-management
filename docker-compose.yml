@@ -13,4 +13,5 @@ services:
       - ./frontend/src:/app/src:ro,Z # Mount for hot reload.
     environment:
       - NODE_ENV=development
+      - API_URL=http://localhost:8080
     command: bun run dev
