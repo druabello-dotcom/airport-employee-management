@@ -2,11 +2,8 @@ package simulation
 
 import (
 	"container/heap"
-	"errors"
 	"time"
 )
-
-var ErrNoEvents = errors.New("no queued events")
 
 type sim struct {
 	maxWait          time.Duration
