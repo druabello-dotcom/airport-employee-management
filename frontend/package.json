@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "scripts": {
-    "dev": "bun --env-file=../.env --hot run dev.js"
+    "dev": "bun --hot run dev.js"
   },
   "dependencies": {
     "chokidar": "^5.0.0"
