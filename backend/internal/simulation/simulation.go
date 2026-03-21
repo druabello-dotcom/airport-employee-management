@@ -39,18 +39,23 @@ func (s *sim) Run(arrivals []time.Duration) []Result {
 			heap.Pop(&checkpoints)
 		}
 
+		var serveTime time.Duration
+
 		deadline := arrivalT + s.maxWait
 		canServeInTime := len(checkpoints) > 0 && checkpoints[0] <= deadline
-		if canServeInTime {
-			t := heap.Pop(&checkpoints).(time.Duration)
-			heap.Push(&checkpoints, t+s.timePerPassenger)
-		} else {
+		if !canServeInTime && len(checkpoints) < s.maxCheckpoints {
 			// Need to open new checkpoint.
 			heap.Push(&checkpoints, arrivalT+s.timePerPassenger)
+			serveTime = arrivalT
+		} else {
+			t := heap.Pop(&checkpoints).(time.Duration)
+			heap.Push(&checkpoints, t+s.timePerPassenger)
+			serveTime = t
 		}
 
 		results[i].Time = arrivalT
 		results[i].MinOpen = len(checkpoints)
+		results[i].TimeWaited = serveTime - arrivalT
 	}
 
 	return results
