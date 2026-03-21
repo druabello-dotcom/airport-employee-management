@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend/src:/app/src # Mount for hot reload.
+      - ./frontend/src:/app/src:ro,Z # Mount for hot reload.
     environment:
       - NODE_ENV=development
     command: bun run dev
