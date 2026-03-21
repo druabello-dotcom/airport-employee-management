@@ -6,17 +6,20 @@ import (
 )
 
 type sim struct {
+	maxCheckpoints   int
 	maxWait          time.Duration
 	timePerPassenger time.Duration
 }
 
 type Result struct {
-	Time    time.Duration `json:"time"`
-	MinOpen int           `json:"minOpen"`
+	Time       time.Duration `json:"time"`
+	TimeWaited time.Duration `json:"wait"`
+	MinOpen    int           `json:"minOpen"`
 }
 
-func New(maxWait, timePerPassenger time.Duration) *sim {
+func New(maxCheckpoints int, maxWait, timePerPassenger time.Duration) *sim {
 	s := &sim{
+		maxCheckpoints:   maxCheckpoints,
 		maxWait:          maxWait,
 		timePerPassenger: timePerPassenger,
 	}
