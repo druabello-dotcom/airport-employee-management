@@ -1,3 +1,10 @@
+#form {
+	display: flex;
+	flex-direction: column;
+}
+.submit {
+	max-width: fit-content;
+}
 /*table*/
 h1 {
 	color: #333;
