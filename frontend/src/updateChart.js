@@ -1,7 +1,6 @@
 let chartExist = null;
 
 export function updateChart(dataObject) {
-	console.log("update chart function called", dataObject);
 	const times = [];
 	const checkpoints = [];
 	for (let i = 0; i < dataObject.length; i++) {
