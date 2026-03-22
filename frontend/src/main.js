@@ -1,4 +1,5 @@
 import { getNeededCheckpoints } from "./api.js";
+import { updateChart } from "./updateChart.js";
 
 document.getElementById("form").addEventListener("submit", async event => {
 	event.preventDefault();
@@ -10,5 +11,5 @@ document.getElementById("form").addEventListener("submit", async event => {
 	}
 
 	let results = await getNeededCheckpoints(file);
-	console.log(results);
+	updateChart(results);
 });
