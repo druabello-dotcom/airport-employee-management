@@ -1,3 +1,5 @@
+let chartExist = null;
+
 export function updateChart(dataObject) {
 	console.log("update chart function called", dataObject);
 	const times = [];
@@ -12,7 +14,9 @@ export function updateChart(dataObject) {
 			times.push(`${hour}:${minutes}`);
 		checkpoints.push(dataObject[i].minOpen);
 	}
-	const myChart = new Chart("myChart", {
+
+	if (chartExist) chartExist.destroy();
+	chartExist  = new Chart("myChart", {
 		type: "line",
 		data: {
 			labels: times,
