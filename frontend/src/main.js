@@ -1,6 +1,6 @@
 import { getNeededCheckpoints } from "./api.js";
 
-document.getElementById("form").addEventListener("submit", event => {
+document.getElementById("form").addEventListener("submit", async event => {
 	event.preventDefault();
 
 	const file = document.getElementById("file").files[0];
@@ -9,5 +9,6 @@ document.getElementById("form").addEventListener("submit", event => {
 		return;
 	}
 
-	console.log(getNeededCheckpoints(file));
+	let results = await getNeededCheckpoints(file);
+	console.log(results);
 });
