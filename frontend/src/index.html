@@ -6,19 +6,23 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<link rel="stylesheet" href="style.css">
-
-	<script type=module src="main.js"></script>
 </head>
 
 <body>
 
 	<!-- upload file -->
-	<form action="" id="form">
-		<input type="file" id="file" accept=".csv">
-		<button type="submit" class="submit">Upload File</button>
-	</form>
+	<div id="calc-employee-managment">
+		<form action="" id="form">
+			<input type="file" id="file" accept=".csv">
+			<button type="submit" class="submit">Upload File</button>
+		</form>
+		<div id="chart-results">
+			<canvas id="myChart"></canvas>
+		</div>
+	</div>
 
-	<!-- Tabell -->
+
+	
 	<table>
 		<thead>
 			<tr>
@@ -200,6 +204,7 @@
 			</tr>
 		</tbody>
 	</table>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+	<script type=module src="main.js"></script>
 </body>
-
 </html>

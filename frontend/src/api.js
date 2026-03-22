@@ -1,7 +1,8 @@
 const defaultConfig = {
 	maxWait: "10m",
-	resultInterval: "5m",
+	resultInterval: "60m",
 	timePerPassenger: "10s",
+	maxCheckpoints: 20,
 };
 
 export async function getNeededCheckpoints(file, config, signal) {
