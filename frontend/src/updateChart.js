@@ -28,7 +28,6 @@ export function updateChart(dataObject) {
 			datasets: [
 				{
 					label: "Checkpoints",
-					borderColor: "#2596be",
 					data: checkpoints,
 					yAxisID: "y1",
 				}, {
@@ -41,24 +40,42 @@ export function updateChart(dataObject) {
 		options: {
 			responsive: true,
 			maintainAspectRatio: false,
-			plugins: {
-				legend: {
-					display: false
-				}
-			},
-		scales: {
-			y1: {
-				type: "linear",
-				position: "left",
-			},
-			y2: {
-				type: "linear",
-				position: "right",
-				grid: {
-					drawOnChartArea: false,
+			scales: {
+				y1: {
+					type: "linear",
+					position: "left",
+				},
+				y2: {
+					type: "linear",
+					position: "right",
+					grid: {
+						drawOnChartArea: false,
+					},
+					ticks: {
+						callback: value => {
+							return value + " min";
+						},
+					},
 				},
 			},
+			plugins: {
+				tooltip: {
+					callbacks: {
+						label: ctx => {
+							const prefix = ctx.dataset.label + ": ";
+							let val = ctx.parsed.y;
+							let suffix = "";
+
+							if (ctx.dataset.yAxisID === "y2") {
+								val = Math.round(ctx.parsed.y * 10) / 10;
+								suffix = " min";
+							}
+
+							return prefix + val + suffix;
+						},
+					}
+				}
+			}
 		},
-		}
 	})
 }
