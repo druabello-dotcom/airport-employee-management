@@ -1,6 +1,10 @@
 import { getNeededCheckpoints } from "./api.js";
 import { updateChart } from "./updateChart.js";
 
+document.getElementById("uploadTrigger").addEventListener("click", () => {
+	document.getElementById("file").click();
+})
+
 document.getElementById("form").addEventListener("submit", async event => {
 	event.preventDefault();
 
