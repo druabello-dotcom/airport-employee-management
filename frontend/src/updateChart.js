@@ -1,3 +1,5 @@
+Chart.defaults.font.family = "'Open Sans', sans-serif";
+
 let chartExist = null;
 
 export function updateChart(dataObject) {
