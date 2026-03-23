@@ -30,10 +30,12 @@ export function updateChart(dataObject) {
 					label: "Checkpoints",
 					data: checkpoints,
 					yAxisID: "y1",
+					tension: 0.2,
 				}, {
 					label: "Wait Time",
 					data: waitTimes,
 					yAxisID: "y2",
+					tension: 0.2,
 				},
 			]
 		},
