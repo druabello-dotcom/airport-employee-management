@@ -24,9 +24,9 @@ func (ag *ArrivalGroup) ParseFromCSV(s []string, columnToIdx map[string]int) err
 		return ErrNoTimeColumn
 	}
 
-	start, err := time.ParseDuration(s[timeIdx])
+	start, err := parseTime(s[timeIdx])
 	if err != nil {
-		return fmt.Errorf("parsing start time: %w", err)
+		return fmt.Errorf("parsing start time (%s): %w", s[timeIdx], err)
 	}
 
 	peopleIdx, ok := columnToIdx["people"]
@@ -36,7 +36,7 @@ func (ag *ArrivalGroup) ParseFromCSV(s []string, columnToIdx map[string]int) err
 
 	amount, err := strconv.Atoi(s[peopleIdx])
 	if err != nil {
-		return fmt.Errorf("parsing amount: %w", err)
+		return fmt.Errorf("parsing amount (%s): %w", s[peopleIdx], err)
 	}
 
 	ag.Start = start
@@ -58,4 +58,23 @@ func ArrivalsToTime(arrivals []ArrivalGroup) []time.Duration {
 	}
 
 	return times
+}
+
+func parseTime(s string) (time.Duration, error) {
+	if len(s) == 5 && s[2] == ':' {
+		hours, err := strconv.Atoi(s[:2])
+		if err != nil {
+			return 0, fmt.Errorf("parsing hours in 'HH:mm' format: %w", err)
+		}
+
+		minutes, err := strconv.Atoi(s[3:])
+		if err != nil {
+			return 0, fmt.Errorf("parsing minutes in 'HH:mm' format: %w", err)
+		}
+
+		t := time.Duration(hours)*time.Hour + time.Duration(minutes)*time.Minute
+		return t, nil
+	}
+
+	return time.ParseDuration(s)
 }
