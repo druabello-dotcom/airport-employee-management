@@ -3,38 +3,81 @@ let chartExist = null;
 export function updateChart(dataObject) {
 	const times = [];
 	const checkpoints = [];
-	for (let i = 0; i < dataObject.length; i++) {
-		let totalMinutes = dataObject[i].time / (60 * Math.pow(10, 9));
-		let hour = Math.floor(totalMinutes / 60);
-		let minutes = totalMinutes % 60;
-		if (minutes < 10) 
+	const waitTimes = [];
+
+	dataObject.forEach(data => {
+		const totalMinutes = data.time / (60 * Math.pow(10, 9));
+		const hour = Math.floor(totalMinutes / 60);
+		const minutes = totalMinutes % 60;
+		if (minutes < 10)
 			times.push(`${hour}:0${minutes}`);
-		else 
+		else
 			times.push(`${hour}:${minutes}`);
-		checkpoints.push(dataObject[i].minOpen);
-	}
+
+		checkpoints.push(data.minOpen);
+
+		const waitMinutes = data.wait / (60 * Math.pow(10, 9));
+		waitTimes.push(waitMinutes);
+	});
 
 	if (chartExist) chartExist.destroy();
-	chartExist  = new Chart("myChart", {
+	chartExist = new Chart("myChart", {
 		type: "line",
 		data: {
 			labels: times,
 			datasets: [
 				{
-					label: "Employee Managment",
-					borderColor: "#2596be",
+					label: "Checkpoints",
 					data: checkpoints,
-				}
+					yAxisID: "y1",
+					tension: 0.2,
+				}, {
+					label: "Wait Time",
+					data: waitTimes,
+					yAxisID: "y2",
+					tension: 0.2,
+				},
 			]
 		},
 		options: {
 			responsive: true,
 			maintainAspectRatio: false,
+			scales: {
+				y1: {
+					type: "linear",
+					position: "left",
+				},
+				y2: {
+					type: "linear",
+					position: "right",
+					grid: {
+						drawOnChartArea: false,
+					},
+					ticks: {
+						callback: value => {
+							return value + " min";
+						},
+					},
+				},
+			},
 			plugins: {
-				legend: {
-					display: false
+				tooltip: {
+					callbacks: {
+						label: ctx => {
+							const prefix = ctx.dataset.label + ": ";
+							let val = ctx.parsed.y;
+							let suffix = "";
+
+							if (ctx.dataset.yAxisID === "y2") {
+								val = Math.round(ctx.parsed.y * 10) / 10;
+								suffix = " min";
+							}
+
+							return prefix + val + suffix;
+						},
+					}
 				}
 			}
-		}
+		},
 	})
 }
