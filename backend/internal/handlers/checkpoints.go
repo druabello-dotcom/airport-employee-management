@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -47,7 +48,13 @@ func HandleCheckpoints(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseMultipartForm(maxRequestBody); err != nil {
-		http.Error(w, "File too large", http.StatusBadRequest)
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			http.Error(w, "File too large", http.StatusBadRequest)
+			return
+		}
+
+		http.Error(w, "Parsing failed", http.StatusBadRequest)
 		return
 	}
 
