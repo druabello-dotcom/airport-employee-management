@@ -6,204 +6,69 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
 	<!-- upload file -->
-	<div id="calc-employee-managment">
-		<form action="" id="form">
-			<input type="file" id="file" accept=".csv">
-			<button type="submit" class="submit">Upload File</button>
-		</form>
-		<div id="chart-results">
-			<canvas id="myChart"></canvas>
+	<div id="checkpoints-managment">
+	<h2>Checkpoint and waiting time management</h2>
+		<div id="calc-checkpoints-managment">
+			<div id="chart-section">
+				<div id="import-file-area">
+					<form action="" id="form">
+						<div id="browse-wrapper">
+							<input type="file" id="file" style="display: none;" accept=".csv">
+							<button type="button" class="button" id="uploadTrigger"><h3>Browse →</h3></button>
+							<span id="file-name">No file selected</span>
+						</div>
+						<button type="submit" id="submit"><h3>Upload File</h3></button>
+					</form>
+				</div>
+				<div id="chart-results">
+					<canvas id="myChart"></canvas>
+				</div>
+			</div>
+			<div id="input-defaultConfig-section">
+				<div id="max-wait" class="input-defaultConfig-container">
+					<div id="display-max-wating-time-value" class="display-config-values">
+						<label>Maximum waiting time in minutes:</label>
+						<label id="max-wait-time-value"></label>
+					</div>
+					<input type="text" id="input-max-wait-time">
+					<button class="update-config-button" type="submit" id="submit-max-wait-time">✓</button>
+				</div>
+				<div id="result-interval" class="input-defaultConfig-container">
+					<div class="display-config-values" id="display-result-interval-value">
+						<label>Result interval in minutes:</label>
+						<label id="result-interval-value"></label>
+					</div>
+					<input type="text" id="input-result-interval">
+					<button class="update-config-button" type="submit" id="submit-result-interval">✓</button>
+				</div>
+				<div id="time-per-passenger" class="input-defaultConfig-container">
+					<div class="display-config-values" id="display-time-per-passenger-value">
+						<label>Time per passenger in seconds:</label>
+						<label id="time-per-passenger-value"></label>
+					</div>
+					<input type="text" id="input-time-per-passenger">
+					<button class="update-config-button" type="submit" id="submit-time-per-passenger">✓</button>
+				</div>
+				<div id="max-checkpoints" class="input-defaultConfig-container">
+					<div class="display-config-values" id="display-max-checkpoints-value">
+						<label>Max checkpoints:</label>
+						<label id="max-checkpoints-value"></label>
+					</div>
+					<input type="text" id="input-max-checkpoints">
+					<button class="update-config-button" type="submit" id="submitMaxCheckpoints">✓</button>
+				</div>
+			</div>
 		</div>
 	</div>
 
-
-	
-	<table>
-		<thead>
-			<tr>
-				<th>Time</th>
-				<th>Expected travelers</th>
-				<th>Amount staff</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>05:00</td>
-				<td>50</td>
-				<td>5</td>
-			</tr>
-			<tr>
-				<td>05:30</td>
-				<td>300</td>
-				<td>30</td>
-			</tr>
-			<tr>
-				<td>06:00</td>
-				<td>700</td>
-				<td>60</td>
-			</tr>
-			<tr>
-				<td>06:30</td>
-				<td>1400</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>07:00</td>
-				<td>2300</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>07:30</td>
-				<td>1900</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>08:00</td>
-				<td>1200</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>08:30</td>
-				<td>800</td>
-				<td>70</td>
-			</tr>
-			<tr>
-				<td>09:00</td>
-				<td>850</td>
-				<td>75</td>
-			</tr>
-			<tr>
-				<td>09:30</td>
-				<td>900</td>
-				<td>75</td>
-			</tr>
-			<tr>
-				<td>10:00</td>
-				<td>1200</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>10:30</td>
-				<td>1300</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>11:00</td>
-				<td>950</td>
-				<td>80</td>
-			</tr>
-			<tr>
-				<td>11:30</td>
-				<td>800</td>
-				<td>70</td>
-			</tr>
-			<tr>
-				<td>12:00</td>
-				<td>800</td>
-				<td>70</td>
-			</tr>
-			<tr>
-				<td>12:30</td>
-				<td>750</td>
-				<td>65</td>
-			</tr>
-			<tr>
-				<td>13:00</td>
-				<td>1150</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>13:30</td>
-				<td>1300</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>14:00</td>
-				<td>1400</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>14:30</td>
-				<td>1200</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>15:00</td>
-				<td>1400</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>15:30</td>
-				<td>1500</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>16:00</td>
-				<td>1600</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>16:30</td>
-				<td>1200</td>
-				<td>100 <span class="delay">(delay)</span></td>
-			</tr>
-			<tr>
-				<td>17:00</td>
-				<td>1000</td>
-				<td>85</td>
-			</tr>
-			<tr>
-				<td>17:30</td>
-				<td>800</td>
-				<td>70</td>
-			</tr>
-			<tr>
-				<td>18:00</td>
-				<td>700</td>
-				<td>60</td>
-			</tr>
-			<tr>
-				<td>18:30</td>
-				<td>600</td>
-				<td>50</td>
-			</tr>
-			<tr>
-				<td>19:00</td>
-				<td>500</td>
-				<td>45</td>
-			</tr>
-			<tr>
-				<td>19:30</td>
-				<td>400</td>
-				<td>35</td>
-			</tr>
-			<tr>
-				<td>20:00</td>
-				<td>250</td>
-				<td>25</td>
-			</tr>
-			<tr>
-				<td>20:30</td>
-				<td>200</td>
-				<td>20</td>
-			</tr>
-			<tr>
-				<td>21:00</td>
-				<td>100</td>
-				<td>10</td>
-			</tr>
-			<tr>
-				<td>21:30</td>
-				<td>50</td>
-				<td>5</td>
-			</tr>
-		</tbody>
-	</table>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 	<script type=module src="main.js"></script>
 </body>
