@@ -1,6 +1,11 @@
 package simulation
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrEmptyInterval = errors.New("this interval is empty")
 
 // @param data Slice of Result, is modified such that it will be empty after the function call.
 func FindIntervalMaximums(data []Result, interval time.Duration) []Result {
@@ -8,7 +13,13 @@ func FindIntervalMaximums(data []Result, interval time.Duration) []Result {
 
 	for i := 0; len(data) > 0; i++ {
 		start := interval * time.Duration(i)
-		r, j := findIntervalMaximum(data, start, interval)
+		r, j, err := findIntervalMaximum(data, start, interval)
+		if err != nil {
+			if errors.Is(err, ErrEmptyInterval) {
+				// Don't add this interval to the result
+				continue
+			}
+		}
 
 		r.Time = start
 		res = append(res, r)
@@ -20,16 +31,20 @@ func FindIntervalMaximums(data []Result, interval time.Duration) []Result {
 }
 
 // @return The maximum in the interval, and the first index outside of the interval.
-func findIntervalMaximum(data []Result, start, interval time.Duration) (Result, int) {
+func findIntervalMaximum(data []Result, start, interval time.Duration) (Result, int, error) {
 	var mxOpen int
 	var mxWait time.Duration
 
+	if len(data) == 0 || data[0].Time >= start+interval {
+		return Result{}, 0, ErrEmptyInterval
+	}
+
 	for i, r := range data {
-		if r.Time-start > interval {
+		if r.Time >= start+interval {
 			return Result{
 				TimeWaited: mxWait,
 				MinOpen:    mxOpen,
-			}, i
+			}, i, nil
 		}
 
 		mxOpen = max(mxOpen, r.MinOpen)
@@ -39,5 +54,5 @@ func findIntervalMaximum(data []Result, start, interval time.Duration) (Result, 
 	return Result{
 		TimeWaited: mxWait,
 		MinOpen:    mxOpen,
-	}, len(data)
+	}, len(data), nil
 }
