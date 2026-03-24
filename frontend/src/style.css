@@ -5,6 +5,7 @@
 #checkpoints-managment {
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	font-family: 'Open Sans', sans-serif;
 	border-radius: 1mm;
 	padding: 1rem;
@@ -35,8 +36,7 @@
 	word-spacing: 2rem;
 	display: flex;
 	justify-content: left;
-	width: fit-content;
-	padding: 0.025rem 2.5rem 0.025rem 1.5rem;
+	width: 7.5rem;
 
 	color: white;
 	background-color: var(--dark-color);
@@ -48,10 +48,7 @@
 
 #submit {
 	display: flex;
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-	padding-left: 1.5rem;
-	font-size: 1rem;
+	width: 7.5rem;
 
 	color: white;
 	background-color: var(--light-color);
@@ -70,7 +67,7 @@ button:active {
 #chart-results {
 	display: flex;
 	width: 100%;
-	height: 22.5rem;
+	height: 23rem;
 }
 #myChart {
 	width: 100%;
@@ -113,4 +110,5 @@ button:active {
 	border-radius: 1mm;
 	color: white;
 	background-color: var(--light-color);
+	transition: 0.1s;
 }
