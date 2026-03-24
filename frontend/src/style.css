@@ -2,16 +2,19 @@
 	--dark-color: #3A405A;
 	--light-color: #99B2DD;
 }
-#calc-checkpoints-managment {
-	font-family: 'Open Sans', sans-serif;
+#checkpoints-managment {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-	margin: 1rem;
-
+	font-family: 'Open Sans', sans-serif;
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	border-radius: 1mm;
 	padding: 1rem;
+}
+#calc-checkpoints-managment {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	margin: 1rem;
 }
 #import-file-area {
 	display: flex;
@@ -67,7 +70,7 @@ button:active {
 }
 #chart-results {
 	display: flex;
-	width: 60%;
+	width: 100%;
 	height: 22.5rem;
 }
 #myChart {
@@ -77,42 +80,38 @@ button:active {
 	padding: 1rem;
 }
 
-/*table*/
-h1 {
-	color: #333;
+/* input default config */
+#input-defaultConfig-section {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
-
-table {
+.input-defaultConfig-container {
+	display: flex;
+	flex-direction: column;
+	box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+	border-radius: 1mm;
+	padding: 1rem;
 	width: 100%;
-	max-width: 600px;
-	border-collapse: collapse;
-	background-color: white;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-th {
-	background-color: #218088;
+.display-config-values {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.display-config-values :last-child {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.9rem;
+	width: 3rem;
+	height: 2rem;
 	color: white;
-	padding: 12px;
-	text-align: left;
-	font-weight: bold;
-	border: 1px solid #24a7b3;
+	background-color: var(--dark-color);
+	border-radius: 1mm;
 }
-
-td {
-	padding: 10px 12px;
-	border: 1px solid #ddd;
-}
-
-tr:nth-child(even) {
-	background-color: #f9f9f9;
-}
-
-tr:hover {
-	background-color: #f0f0f0;
-}
-
-.delay {
-	color: #e74c3c;
-	font-weight: bold;
+.update-config-button {
+	border-radius: 1mm;
+	color: white;
+	background-color: var(--light-color);
 }
