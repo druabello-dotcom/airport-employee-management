@@ -43,20 +43,20 @@ displayMaxCheckpoints.textContent = defaultConfig.maxCheckpoints
 document.getElementById("submitMaxCheckpoints").onclick = function() {
 	let input = document.getElementById("input-max-checkpoints").value;
 	defaultConfig.maxCheckpoints = Number(input);
-	console.log(defaultConfig.maxCheckpoints)
+	displayMaxCheckpoints.textContent = defaultConfig.maxCheckpoints;
 }
 document.getElementById("submit-time-per-passenger").onclick = function() {
 	let input = document.getElementById("input-time-per-passenger").value;
 	defaultConfig.timePerPassenger = `${Number(input)}s`;
-	console.log(defaultConfig.timePerPassenger)
+	displayTimePerPassenger.textContent = defaultConfig.timePerPassenger;
 }
 document.getElementById("submit-max-wait-time").onclick = function() {
 	let input = document.getElementById("input-max-wait-time").value;
 	defaultConfig.maxWait = `${Number(input)}m`;
-	console.log(defaultConfig.maxWait)
+	displayMaxWait.textContent = defaultConfig.maxWait;
 }
 document.getElementById("submit-result-interval").onclick = function() {
 	let input = document.getElementById("input-result-interval").value;
 	defaultConfig.resultInterval = `${Number(input)}m`;
-	console.log(defaultConfig.resultInterval)
+	displayResultInterval.textContent = defaultConfig.resultInterval;
 }
