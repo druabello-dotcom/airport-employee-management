@@ -33,9 +33,9 @@
 	gap: 1rem;
 }
 #uploadTrigger {
-	word-spacing: 2rem;
+	word-spacing: 1rem;
 	display: flex;
-	justify-content: left;
+	justify-content: center;
 	width: 7.5rem;
 
 	color: white;
@@ -48,6 +48,7 @@
 
 #submit {
 	display: flex;
+	justify-content: center;
 	width: 7.5rem;
 
 	color: white;
