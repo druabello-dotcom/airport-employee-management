@@ -1,20 +1,82 @@
+:root {
+	--dark-color: #3A405A;
+	--light-color: #99B2DD;
+}
+#calc-checkpoints-managment {
+	font-family: 'Open Sans', sans-serif;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin: 1rem;
+
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	border-radius: 1mm;
+	padding: 1rem;
+}
+#import-file-area {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+}
 #form {
 	display: flex;
 	flex-direction: column;
+	gap: 0.5rem;
 }
-.submit {
-	max-width: fit-content;
+#browse-wrapper {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 1rem;
+}
+#uploadTrigger {
+	word-spacing: 2rem;
+	display: flex;
+	justify-content: left;
+	width: fit-content;
+	padding: 0.025rem 2.5rem 0.025rem 1.5rem;
+
+	color: white;
+	background-color: var(--dark-color);
+	border: none;
+	border-radius: 1.5mm;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+#submit {
+	display: flex;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	padding-left: 1.5rem;
+	font-size: 1rem;
+
+	color: white;
+	background-color: var(--light-color);
+	border: none;
+	border-radius: 1.5mm;
+	cursor: pointer;
+	transition: 0.2s;
+}
+#submit:hover {
+	filter: brightness(0.9);
+}
+
+button:active {
+	transform: translateY(0.15rem);
 }
 #chart-results {
-	width: 100%;
-	height: 250px;
+	display: flex;
+	width: 60%;
+	height: 22.5rem;
 }
 #myChart {
 	width: 100%;
-	height: inherit;
-	border: 1px solid #6e6e6e;
+	box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 	border-radius: 1mm;
+	padding: 1rem;
 }
+
 /*table*/
 h1 {
 	color: #333;
