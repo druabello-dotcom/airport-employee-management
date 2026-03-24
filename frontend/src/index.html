@@ -14,41 +14,57 @@
 <body>
 
 	<!-- upload file -->
-	<div id="calc-checkpoints-managment">
-		<div id="import-file-area">
-			<h2>Checkpoint and Wating time Management</h2>
-			<form action="" id="form">
-				<div id="browse-wrapper">
-					<input type="file" id="file" style="display: none;" accept=".csv">
-					<button type="button" class="button" id="uploadTrigger"><h3>Browse →</h3></button>
-					<span id="file-name">No file selected</span>
+	<div id="checkpoints-managment">
+	<h2>Checkpoint and Wating time Management</h2>
+		<div id="calc-checkpoints-managment">
+			<div id="chart-section">
+				<div id="import-file-area">
+					<form action="" id="form">
+						<div id="browse-wrapper">
+							<input type="file" id="file" style="display: none;" accept=".csv">
+							<button type="button" class="button" id="uploadTrigger"><h3>Browse →</h3></button>
+							<span id="file-name">No file selected</span>
+						</div>
+						<button type="submit" id="submit">Upload File</button>
+					</form>
 				</div>
-				<button type="submit" id="submit">Upload File</button>
-			</form>
-		</div>
-		<div id="chart-results">
-			<canvas id="myChart"></canvas>
-		</div>
-		<div id="input-config">
-			<div id="max-wait">
-				<label>Maximum waiting time in minutes</label>
-				<input type="text" id="input-max-wait-time">
-				<button type="submit" id="submit-max-wait-time">✓</button>
+				<div id="chart-results">
+					<canvas id="myChart"></canvas>
+				</div>
 			</div>
-			<div id="result-interval">
-				<label>Result interval in minutes</label>
-				<input type="text" id="input-result-interval">
-				<button type="submit" id="submit-result-interval">✓</button>
-			</div>
-			<div id="time-per-passenger">
-				<label>Time per passenger in seconds</label>
-				<input type="text" id="input-time-per-passenger">
-				<button type="submit" id="submit-time-per-passenger">✓</button>
-			</div>
-			<div id="max-checkpoints">
-				<label>Max checkpoints</label>
-				<input type="text" id="input-max-checkpoints">
-				<button type="submit" id="submitMaxCheckpoints">✓</button>
+			<div id="input-defaultConfig-section">
+				<div id="max-wait" class="input-defaultConfig-container">
+					<div id="display-max-wating-time-value" class="display-config-values">
+						<label>Maximum waiting time in minutes:</label>
+						<label id="max-wait-time-value"></label>
+					</div>
+					<input type="text" id="input-max-wait-time">
+					<button type="submit" id="submit-max-wait-time">✓</button>
+				</div>
+				<div id="result-interval" class="input-defaultConfig-container">
+					<div class="display-config-values" id="display-result-interval-value">
+						<label>Result interval in minutes:</label>
+						<label id="result-interval-value"></label>
+					</div>
+					<input type="text" id="input-result-interval">
+					<button type="submit" id="submit-result-interval">✓</button>
+				</div>
+				<div id="time-per-passenger" class="input-defaultConfig-container">
+					<div class="display-config-values" id="display-time-per-passenger-value">
+						<label>Time per passenger in seconds:</label>
+						<label id="time-per-passenger-value"></label>
+					</div>
+					<input type="text" id="input-time-per-passenger">
+					<button type="submit" id="submit-time-per-passenger">✓</button>
+				</div>
+				<div id="max-checkpoints" class="input-defaultConfig-container">
+					<div class="display-config-values" id="display-max-checkpoints-value">
+						<label>Max checkpoints:</label>
+						<label id="max-checkpoints-value"></label>
+					</div>
+					<input type="text" id="input-max-checkpoints">
+					<button type="submit" id="submitMaxCheckpoints">✓</button>
+				</div>
 			</div>
 		</div>
 	</div>
