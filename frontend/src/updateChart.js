@@ -46,10 +46,12 @@ export function updateChart(dataObject) {
 				y1: {
 					type: "linear",
 					position: "left",
+					min: 0,
 				},
 				y2: {
 					type: "linear",
 					position: "right",
+					min: 0,
 					grid: {
 						drawOnChartArea: false,
 					},

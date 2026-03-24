@@ -34,8 +34,7 @@ func (s *sim) Run(arrivals []time.Duration) []Result {
 
 	checkpoints := make(timeHeap, 0)
 	for i, arrivalT := range arrivals {
-		// Remove all idle checkpoints.
-		for len(checkpoints) > 0 && checkpoints[0] < arrivalT {
+		if !s.exceedsMaxWait(len(checkpoints)-1, checkpoints, arrivals[i:]) {
 			heap.Pop(&checkpoints)
 		}
 
@@ -59,4 +58,36 @@ func (s *sim) Run(arrivals []time.Duration) []Result {
 	}
 
 	return results
+}
+
+// Checks whether maxWait will be exceeded if using checkpointCnt checkpoints over the next
+// maxWait time interval of arrivals.
+func (s *sim) exceedsMaxWait(checkpointCnt int, checkpoints timeHeap, arrivals []time.Duration) bool {
+	if checkpointCnt <= 0 {
+		return true
+	}
+
+	c := make(timeHeap, len(checkpoints))
+	copy(c, checkpoints)
+
+	for len(c) > checkpointCnt {
+		heap.Pop(&c)
+	}
+
+	for _, a := range arrivals {
+		if a > arrivals[0]+(s.maxWait/2) {
+			return false
+		}
+
+		deadline := a + s.maxWait
+		canServeInTime := len(c) > 0 && c[0] <= deadline
+		if canServeInTime {
+			t := heap.Pop(&c).(time.Duration)
+			heap.Push(&c, max(t, a)+s.timePerPassenger)
+		} else {
+			return true
+		}
+	}
+
+	return false
 }
