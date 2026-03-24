@@ -60,3 +60,31 @@ func (s *sim) Run(arrivals []time.Duration) []Result {
 
 	return results
 }
+
+// Checks whether maxWait will be exceeded if using checkpointCnt checkpoints over the next
+// maxWait time interval of arrivals.
+func (s *sim) exceedsMaxWait(checkpointCnt int, checkpoints timeHeap, arrivals []time.Duration) bool {
+	c := make(timeHeap, len(checkpoints))
+	copy(c, checkpoints)
+
+	for len(c) > checkpointCnt {
+		heap.Pop(&c)
+	}
+
+	for _, a := range arrivals {
+		if a > arrivals[0]+s.maxWait {
+			return false
+		}
+
+		deadline := a + s.maxWait
+		canServeInTime := len(c) > 0 && c[0] <= deadline
+		if canServeInTime {
+			heap.Pop(&c)
+			heap.Push(&c, a+s.timePerPassenger)
+		} else {
+			return true
+		}
+	}
+
+	return false
+}
