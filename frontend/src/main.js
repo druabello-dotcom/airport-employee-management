@@ -27,6 +27,18 @@ document.getElementById("form").addEventListener("submit", async event => {
 	updateChart(results);
 });
 
+const displayMaxWait = document.querySelector("#display-max-wating-time-value p");
+displayMaxWait.textContent = defaultConfig.maxWait;
+
+const displayResultInterval = document.querySelector("#display-result-interval-value p");
+displayResultInterval.textContent = defaultConfig.resultInterval;
+
+const displayTimePerPassenger = document.querySelector("#display-time-per-passenger-value p");
+displayTimePerPassenger.textContent = defaultConfig.timePerPassenger;
+
+const displayMaxCheckpoints = document.querySelector("#display-max-checkpoints-value p");
+displayMaxCheckpoints.textContent = defaultConfig.maxCheckpoints
+
 // input default config object in api.js
 document.getElementById("submitMaxCheckpoints").onclick = function() {
 	let input = document.getElementById("input-max-checkpoints").value;
