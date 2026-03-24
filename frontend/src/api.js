@@ -1,4 +1,4 @@
-const defaultConfig = {
+export const defaultConfig = {
 	maxWait: "10m",
 	resultInterval: "60m",
 	timePerPassenger: "10s",
