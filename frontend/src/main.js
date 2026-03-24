@@ -27,17 +27,17 @@ document.getElementById("form").addEventListener("submit", async event => {
 	updateChart(results);
 });
 
-const displayMaxWait = document.querySelector("#display-max-wating-time-value p");
+const displayMaxWait = document.getElementById("max-wait-time-value");
 displayMaxWait.textContent = defaultConfig.maxWait;
 
-const displayResultInterval = document.querySelector("#display-result-interval-value p");
+const displayResultInterval = document.getElementById("result-interval-value");
 displayResultInterval.textContent = defaultConfig.resultInterval;
 
-const displayTimePerPassenger = document.querySelector("#display-time-per-passenger-value p");
+const displayTimePerPassenger = document.getElementById("time-per-passenger-value");
 displayTimePerPassenger.textContent = defaultConfig.timePerPassenger;
 
-const displayMaxCheckpoints = document.querySelector("#display-max-checkpoints-value p");
-displayMaxCheckpoints.textContent = defaultConfig.maxCheckpoints
+const displayMaxCheckpoints = document.getElementById("max-checkpoints-value");
+displayMaxCheckpoints.textContent = defaultConfig.maxCheckpoints;
 
 // input default config object in api.js
 document.getElementById("submitMaxCheckpoints").onclick = function() {
